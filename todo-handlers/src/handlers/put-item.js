@@ -11,6 +11,7 @@
 //  * A simple example includes a HTTP post method to add one item to a DynamoDB table.
 //  */
 exports.putItemHandler = async (event) => {
+    console.log('hi')
     if (event.httpMethod !== 'POST') {
         throw new Error(`postMethod only accepts POST method, you tried: ${event.httpMethod} method.`);
     }
@@ -32,6 +33,11 @@ exports.putItemHandler = async (event) => {
     // const result = await docClient.put(params).promise();
 
     const response = {
+        headers: {
+            "Access-Control-Allow-Headers" : "Content-Type",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+        },
         statusCode: 200,
         body: 'Item added to the table.'
     };
