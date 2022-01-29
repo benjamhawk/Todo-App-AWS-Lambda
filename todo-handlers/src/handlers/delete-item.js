@@ -1,6 +1,7 @@
-const { DynamoDBClient, PutItemCommand } = require("@aws-sdk/client-dynamodb");
-
-const { v4: uuid } = require("uuid");
+const {
+  DynamoDBClient,
+  DeleteItemCommand,
+} = require("@aws-sdk/client-dynamodb");
 
 const client =
   process.env.ENV === "dev"
@@ -13,23 +14,19 @@ const client =
 // /**
 //  * A simple example includes a HTTP post method to add one item to a DynamoDB table.
 //  */
-exports.putItemHandler = async (event) => {
-  if (event.httpMethod !== "POST") {
+exports.deleteItemHandler = async (event) => {
+  if (event.httpMethod !== "DELETE") {
     throw new Error(
-      `postMethod only accepts POST method, you tried: ${event.httpMethod} method.`
+      `deleteMethod only accepts DELETE method, you tried: ${event.httpMethod} method.`
     );
   }
 
   // // Get id and name from the body of the request
-  const { name, order } = JSON.parse(event.body);
-  const id = uuid();
+  const { id } = JSON.parse(event.body);
 
-  // const result = await docClient.put(params).promise();
-  const command = new PutItemCommand({
-    Item: {
+  const command = new DeleteItemCommand({
+    Key: {
       id: { S: id },
-      name: { S: name },
-      order: { S: order },
     },
     TableName: process.env.SAMPLE_TABLE,
   });
@@ -42,7 +39,7 @@ exports.putItemHandler = async (event) => {
       "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
     },
     statusCode: 200,
-    body: "Item added to the table.",
+    body: "Item removed from the table.",
   };
 
   // All log statements are written to CloudWatch
