@@ -1,17 +1,31 @@
 {
-    "name": "delete-test-01",
-    "description": "delete-test-01-description",
-    "version": "0.0.1",
-    "private": true,
-    "dependencies": {
-        "@aws-sdk/client-dynamodb": "^3.48.0",
-        "aws-sdk": "^2.799.0",
-        "uuid": "^8.3.2"
-    },
-    "devDependencies": {
-        "jest": "^26.6.3"
-    },
-    "scripts": {
-        "test": "jest"
-    }
+  "name": "delete-test-01",
+  "description": "delete-test-01-description",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.48.0",
+    "aws-sdk": "^2.1066.0",
+    "concurrently": "^7.0.0",
+    "source-map-support": "^0.5.21",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.92",
+    "@types/node": "^17.0.13",
+    "aws-sam-webpack-plugin": "^0.11.0",
+    "jest": "^26.6.3",
+    "rimraf": "^3.0.2",
+    "ts-loader": "^9.2.6",
+    "typescript": "^4.5.5",
+    "webpack": "^5.67.0",
+    "webpack-cli": "^4.9.2"
+  },
+  "scripts": {
+    "test": "jest",
+    "start-api": "sam local start-api --env-vars env.json -p 5000",
+    "build": "webpack-cli",
+    "watch": "webpack-cli -w",
+    "dev": "concurrently \"npm run watch\" \"npm run start-api\""
+  }
 }

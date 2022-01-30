@@ -1,15 +1,16 @@
-const { DynamoDBClient, ScanCommand } = require("@aws-sdk/client-dynamodb");
+import { APIGatewayEvent } from "aws-lambda";
 
-console.log(process.env.TEST_ENV);
+import { DynamoDBClient, ScanCommand } from "@aws-sdk/client-dynamodb";
+
 const client =
-  process.env.TEST_ENV === "dev"
+  process.env.ENVIRONMENT === "dev"
     ? new DynamoDBClient({
         endpoint: "http://docker.for.mac.localhost:8000",
         region: "local",
       })
-    : new DynamoDBClient();
+    : new DynamoDBClient({});
 
-exports.getAllItemsHandler = async (event) => {
+export const getAllItemsHandler = async (event: APIGatewayEvent) => {
   try {
     if (event.httpMethod !== "GET") {
       throw new Error(
@@ -18,11 +19,7 @@ exports.getAllItemsHandler = async (event) => {
     }
 
     const TableName = process.env.SAMPLE_TABLE;
-    console.log(
-      "🚀 ~ file: get-all-items.js ~ line 18 ~ exports.getAllItemsHandler= ~ TableName",
-      TableName,
-      process.env.TEST_ENV
-    );
+
     const command = new ScanCommand({
       TableName,
     });
@@ -33,6 +30,7 @@ exports.getAllItemsHandler = async (event) => {
         id: item.id.S,
         name: item.name.S,
         order: item.order.S,
+        test: "hello4",
       };
     });
 

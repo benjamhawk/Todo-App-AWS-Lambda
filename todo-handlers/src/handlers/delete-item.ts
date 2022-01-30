@@ -1,27 +1,27 @@
-const {
-  DynamoDBClient,
-  DeleteItemCommand,
-} = require("@aws-sdk/client-dynamodb");
+import { APIGatewayEvent } from "aws-lambda";
+
+import { DeleteItemCommand, DynamoDBClient } from "@aws-sdk/client-dynamodb";
 
 const client =
-  process.env.ENV === "dev"
+  process.env.ENVIRONMENT === "dev"
     ? new DynamoDBClient({
         endpoint: "http://docker.for.mac.localhost:8000",
         region: "local",
       })
-    : new DynamoDBClient();
+    : new DynamoDBClient({});
 
 // /**
 //  * A simple example includes a HTTP post method to add one item to a DynamoDB table.
 //  */
-exports.deleteItemHandler = async (event) => {
-  if (event.httpMethod !== "DELETE") {
+export const deleteItemHandler = async (event: APIGatewayEvent) => {
+  if (event.httpMethod !== "POST") {
     throw new Error(
-      `deleteMethod only accepts DELETE method, you tried: ${event.httpMethod} method.`
+      `deleteMethod only accepts POST method, you tried: ${event.httpMethod} method.`
     );
   }
 
   // // Get id and name from the body of the request
+
   const { id } = JSON.parse(event.body);
 
   const command = new DeleteItemCommand({
@@ -42,9 +42,5 @@ exports.deleteItemHandler = async (event) => {
     body: "Item removed from the table.",
   };
 
-  // All log statements are written to CloudWatch
-  console.info(
-    `response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`
-  );
   return response;
 };

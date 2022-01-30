@@ -1,19 +1,20 @@
-const { DynamoDBClient, PutItemCommand } = require("@aws-sdk/client-dynamodb");
+import { APIGatewayEvent } from "aws-lambda";
+import { v4 as uuid } from "uuid";
 
-const { v4: uuid } = require("uuid");
+import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
 
 const client =
-  process.env.ENV === "dev"
+  process.env.ENVIRONMENT === "dev"
     ? new DynamoDBClient({
         endpoint: "http://docker.for.mac.localhost:8000",
         region: "local",
       })
-    : new DynamoDBClient();
+    : new DynamoDBClient({});
 
 // /**
 //  * A simple example includes a HTTP post method to add one item to a DynamoDB table.
 //  */
-exports.putItemHandler = async (event) => {
+export const putItemHandler = async (event: APIGatewayEvent) => {
   if (event.httpMethod !== "POST") {
     throw new Error(
       `postMethod only accepts POST method, you tried: ${event.httpMethod} method.`

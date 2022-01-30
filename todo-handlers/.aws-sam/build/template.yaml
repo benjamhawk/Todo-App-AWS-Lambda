@@ -1,0 +1,122 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: sam-app
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  getAllItemsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.getAllItemsHandler
+      CodeUri: getAllItemsFunction
+      Runtime: nodejs14.x
+      Architectures:
+        - x86_64
+      MemorySize: 128
+      Timeout: 100
+      Description: >-
+        A simple example includes a HTTP get method to get all items from a
+        DynamoDB table.
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TodosTable
+      Environment:
+        Variables:
+          SAMPLE_TABLE: !Ref TodosTable
+          ENVIRONMENT: prod
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /
+            Method: GET
+  getByIdFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.getByIdHandler
+      CodeUri: getByIdFunction
+      Runtime: nodejs14.x
+      Architectures:
+        - x86_64
+      MemorySize: 128
+      Timeout: 100
+      Description: >-
+        A simple example includes a HTTP get method to get one item by id from a
+        DynamoDB table.
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TodosTable
+      Environment:
+        Variables:
+          SAMPLE_TABLE: !Ref TodosTable
+          ENVIRONMENT: prod
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /{id}
+            Method: GET
+  putItemFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.putItemHandler
+      CodeUri: putItemFunction
+      Runtime: nodejs14.x
+      Architectures:
+        - x86_64
+      MemorySize: 128
+      Timeout: 100
+      Description: >-
+        A simple example includes a HTTP post method to add one item to a
+        DynamoDB table.
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TodosTable
+      Environment:
+        Variables:
+          SAMPLE_TABLE: !Ref TodosTable
+          ENVIRONMENT: prod
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /
+            Method: POST
+  deleteItemFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.deleteItemHandler
+      CodeUri: deleteItemFunction
+      Runtime: nodejs14.x
+      Architectures:
+        - x86_64
+      MemorySize: 128
+      Timeout: 100
+      Description: >-
+        A simple example includes a HTTP delete method to remove one item from a
+        DynamoDB table.
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TodosTable
+      Environment:
+        Variables:
+          SAMPLE_TABLE: !Ref TodosTable
+          ENVIRONMENT: prod
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /delete
+            Method: POST
+  TodosTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: id
+        Type: String
+      ProvisionedThroughput:
+        ReadCapacityUnits: 2
+        WriteCapacityUnits: 2
+Outputs:
+  WebEndpoint:
+    Description: API Gateway endpoint URL for Prod stage
+    Value: !Sub >-
+      https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/
